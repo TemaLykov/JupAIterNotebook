@@ -15,8 +15,8 @@ export class LangchainService {
   constructor(apiKey: string) {
     this.model = new ChatOpenAI({
       openAIApiKey: apiKey,
-      modelName: 'gpt-4',
-      temperature: 1,
+      modelName: 'gpt-4o',
+      temperature: 0.7,
     });
   }
 
@@ -62,8 +62,15 @@ Determine if the user wants to edit the entire notebook or a specific cell.`)
         const response = await this.model.call([
           new SystemMessage(`You are a Jupyter notebook generator. ${
             targetCell 
-              ? "Your task is to update a single cell based on the user's request."
-              : "Your task is to generate a complete notebook based on the user's request."
+              ? `Your task is to update a single cell based on the user's request.
+- Produce high-quality ${targetCell.type} content.
+- If it's code, ensure it is well-commented, efficient, and follows best practices.
+- If it's markdown, ensure it is well-structured with appropriate headings and formatting.`
+              : `Your task is to generate or update the entire notebook according to the user's request.
+- Create a well-structured notebook with logical sections.
+- Include detailed markdown comments for explanations and high-quality code where applicable.
+- Place all 'pip install' and 'import' statements at the beginning, well-commented.
+- Distribute content across cells to avoid overloading or underloading any single cell.`
           }
           
 Please ensure your response strictly follows this JSON format:
