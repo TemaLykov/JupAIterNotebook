@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .dark {
+    color-scheme: dark;
+  }
+}
+
+.prose-headings\:mt-0 h1:first-child,
+.prose-headings\:mt-0 h2:first-child,
+.prose-headings\:mt-0 h3:first-child,
+.prose-headings\:mt-0 h4:first-child,
+.prose-headings\:mt-0 h5:first-child,
+.prose-headings\:mt-0 h6:first-child {
+  margin-top: 0;
+}
