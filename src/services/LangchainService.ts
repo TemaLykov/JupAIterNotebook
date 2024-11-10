@@ -60,46 +60,29 @@ Determine if the user wants to edit the entire notebook or a specific cell.`)
     const makeAttempt = async (attempt: number): Promise<any> => {
       try {
         const response = await this.model.call([
-          new SystemMessage(`You are a Jupyter notebook generator. ${
-            targetCell 
-              ? `Your task is to update a single cell based on the user's request.
-- Produce high-quality ${targetCell.type} content.
-- If it's code, ensure it is well-commented, efficient, and follows best practices.
-- If it's markdown, ensure it is well-structured with appropriate headings and formatting.`
-              : `Your task is to generate or update the entire notebook according to the user's request.
+          new SystemMessage(`You are a Jupyter notebook generator.
+Your task is to generate the entire notebook according to the user's request.
 - Create a well-structured notebook with logical sections.
 - Include detailed markdown comments for explanations and high-quality code where applicable.
 - Place all 'pip install' and 'import' statements at the beginning, well-commented.
-- Distribute content across cells to avoid overloading or underloading any single cell.`
-          }
-          
+- Distribute content across cells to avoid overloading or underloading any single cell.
+${targetCell ? `Only update Cell ${targetCell.type.toUpperCase()} - ${targetCell.content.slice(0, 100)}... based on the user's request, keeping the rest of the notebook intact.` : ''}
+
 Please ensure your response strictly follows this JSON format:
 
 {
   "chat_answer": "Your explanation here",
-  ${targetCell ? `
-  "cell": {
-    "type": "code" or "markdown",
-    "content": "Updated cell content"
-  }` : `
   "cells": [
     {
       "type": "code" or "markdown",
       "content": "Cell content"
     }
-  ]`}
+  ]
 }`),
-          new HumanMessage(`${
-            targetCell
-              ? `Current cell content (${targetCell.type}):
-${targetCell.content}
-
-User request: ${userMessage}`
-              : `Current notebook:
+          new HumanMessage(`Current notebook:
 ${JSON.stringify(currentCells, null, 2)}
 
-User request: ${userMessage}`
-          }`)
+User request: ${userMessage}`)
         ]);
 
         return JSON.parse(response.content);
